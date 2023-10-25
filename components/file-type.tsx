@@ -25,7 +25,7 @@ const FileType = ({ onChange, value, fileType }: FileTypeProps) => {
       {fileType === "pdf" ? (
         <FileIcon className="h-10 w-10 fill-indigo-200 stroke-indigo-400" />
       ) : (
-        <Image src={value} alt="Upload" className="rounded-full" />
+        <Image src={value} alt="Upload" className="rounded-full" fill />
       )}
 
       {fileType === "pdf" && (
