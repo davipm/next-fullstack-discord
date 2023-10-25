@@ -1,6 +1,7 @@
 import { Member, Profile, Server } from "@prisma/client";
 import { Server as NetServer, Socket } from "net";
 import { NextApiResponse } from "next";
+import { ReactNode } from "react";
 import { Server as SocketIOServer } from "socket.io";
 
 export type ServerWithMembersWithProfiles = Server & {
@@ -13,4 +14,8 @@ export type NextApiResponseServerIo = NextApiResponse & {
       io: SocketIOServer;
     };
   };
+};
+
+export type PropsChildren = {
+  children: ReactNode;
 };
