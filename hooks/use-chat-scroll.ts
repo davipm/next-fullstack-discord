@@ -47,7 +47,9 @@ export default function useChatScroll({
       const distanceFromBottom =
         topDiv.scrollHeight - topDiv.scrollTop - topDiv.clientHeight;
 
-      return distanceFromBottom <= 100;
+      // Only auto scroll if the distance from the bottom is less than 100 pixels
+      // and the user hasn't scrolled up manually.
+      return distanceFromBottom <= 100 && topDiv.scrollTop === 0;
     };
 
     if (shouldAutoScroll()) {
