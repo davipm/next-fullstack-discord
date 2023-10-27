@@ -3,6 +3,7 @@
 import { FileIcon, X } from "lucide-react";
 import Image from "next/image";
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
 type FileTypeProps = {
   value: string;
@@ -11,14 +12,14 @@ type FileTypeProps = {
 };
 
 const FileType = ({ onChange, value, fileType }: FileTypeProps) => {
-  const containerClassName =
-    fileType === "pdf"
-      ? "relative flex items-center p-2 mt-2 rounded-md bg-background/10"
-      : "relative h-20 w-20";
-  const closeBtnClassName =
-    fileType === "pdf"
-      ? "bg-rose-500 text-white p-1 rounded-full absolute -top-2 -right-2 shadow-sm"
-      : "top-0 right-0";
+  const containerClassName = twMerge(
+    "relative flex items-center p-2 mt-2 rounded-md bg-background/10",
+    fileType === "pdf" && "bg-white",
+  );
+  const closeBtnClassName = twMerge(
+    "bg-rose-500 text-white p-1 rounded-full absolute -top-2 -right-2 shadow-sm",
+    fileType === "pdf" && "top-0 right-0",
+  );
 
   return (
     <section className={containerClassName}>
@@ -38,7 +39,6 @@ const FileType = ({ onChange, value, fileType }: FileTypeProps) => {
           {value}
         </a>
       )}
-
       <button
         onClick={() => onChange("")}
         className={closeBtnClassName}
