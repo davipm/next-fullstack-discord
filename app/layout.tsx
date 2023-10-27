@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import QueryProvider from "@/providers/query-provider";
+import { SocketProvider } from "@/providers/socket-provider";
 import { PropsChildren } from "@/types";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,7 +19,9 @@ export default function RootLayout({ children }: PropsChildren) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <SocketProvider>{children}</SocketProvider>
+        </QueryProvider>
       </body>
     </html>
   );
