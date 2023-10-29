@@ -11,7 +11,7 @@ type FileTypeProps = {
   fileType: string;
 };
 
-const FileType = ({ onChange, value, fileType }: FileTypeProps) => {
+export default function FileType({ onChange, value, fileType }: FileTypeProps) {
   const containerClassName = twMerge(
     "relative flex items-center p-2 mt-2 rounded-md bg-background/10",
     fileType === "pdf" && "bg-white",
@@ -39,15 +39,14 @@ const FileType = ({ onChange, value, fileType }: FileTypeProps) => {
           {value}
         </a>
       )}
+
       <button
+        type="button"
         onClick={() => onChange("")}
         className={closeBtnClassName}
-        type="button"
       >
         <X className="h-4 w-4" />
       </button>
     </section>
   );
-};
-
-export default FileType;
+}
