@@ -1,6 +1,8 @@
 import { Hash } from "lucide-react";
 
+import ChatVideoButton from "@/components/chat/chat-video-button";
 import MobileToggle from "@/components/mobile-toggle";
+import SocketIndicator from "@/components/socket-indicator";
 import UserAvatar from "@/components/user-avatar";
 
 interface Props {
@@ -10,7 +12,6 @@ interface Props {
   imageUrl?: string;
 }
 
-//TODO: finish the component ChatHeader
 export default function ChatHeader({ serverId, imageUrl, name, type }: Props) {
   return (
     <header className="text-md font-semibold px-3 flex items-center h-12 border-neutral-200 dark:border-neutral-800 border-b-2">
@@ -24,8 +25,8 @@ export default function ChatHeader({ serverId, imageUrl, name, type }: Props) {
       <p className="font-semibold text-base text-black dark:text-white">
         {name}
       </p>
-      <div>{type === "conversation" && <div>ChatVideoButton</div>}</div>
-      <div>SocketIndicator</div>
+      <div>{type === "conversation" && <ChatVideoButton />}</div>
+      <SocketIndicator />
     </header>
   );
 }
