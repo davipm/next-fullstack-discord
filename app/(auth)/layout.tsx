@@ -1,13 +1,7 @@
-import { useState } from "react";
+import { PropsChildren } from "@/types";
 
-// import { Container } from "./styles";
-
-export default function Layout() {
-  const [item, setItem] = useState(null);
-
+export default function AuthLayout({ children }: PropsChildren) {
   return (
-    <div>
-      <p></p>
-    </div>
+    <div className="h-full flex items-center justify-center">{children}</div>
   );
 }
