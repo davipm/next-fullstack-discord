@@ -47,9 +47,7 @@ export default function InitialModal() {
     },
   });
 
-  const isLoading = form.formState.isSubmitting;
-
-  const { mutate: onSubmit } = useMutation({
+  const { mutate: onSubmit, isPending: isLoading } = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => {
       return axios.post("/api/servers", values);
     },

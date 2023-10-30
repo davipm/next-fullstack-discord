@@ -1,14 +1,17 @@
 import "@uploadthing/react/styles.css";
 import "./globals.css";
 
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 
+import { cn } from "@/lib/utils";
 import QueryProvider from "@/providers/query-provider";
 import { SocketProvider } from "@/providers/socket-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 import { PropsChildren } from "@/types";
 
-const inter = Inter({ subsets: ["latin"] });
+const open_sans = Open_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Discord App",
@@ -17,11 +20,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: PropsChildren) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <QueryProvider>
-          <SocketProvider>{children}</SocketProvider>
-        </QueryProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn(open_sans.className, "bg-white dark:bg-[#313338]")}>
+        <ClerkProvider>
+          <QueryProvider>
+            <SocketProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem={false}
+                storageKey="discord-theme"
+              >
+                {children}
+              </ThemeProvider>
+            </SocketProvider>
+          </QueryProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
