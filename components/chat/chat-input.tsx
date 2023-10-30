@@ -36,7 +36,7 @@ export default function ChatInput({ apiUrl, type, query, name }: Props) {
     },
   });
 
-  const { mutate: onSubmit, isPending: isLoading } = useMutation({
+  const { mutate, isPending: isLoading } = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => {
       const url = qs.stringifyUrl({
         url: apiUrl,
@@ -51,9 +51,12 @@ export default function ChatInput({ apiUrl, type, query, name }: Props) {
     },
   });
 
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    mutate({ content: data.content });
+  };
+
   return (
     <Form {...form}>
-      {/* @ts-ignore */}
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}

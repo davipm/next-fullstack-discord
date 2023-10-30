@@ -47,7 +47,7 @@ export default function InitialModal() {
     },
   });
 
-  const { mutate: onSubmit, isPending: isLoading } = useMutation({
+  const { mutate, isPending: isLoading } = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => {
       return axios.post("/api/servers", values);
     },
@@ -57,6 +57,10 @@ export default function InitialModal() {
       window.location.reload();
     },
   });
+
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    mutate({ imageUrl: data.imageUrl, name: data.name });
+  };
 
   return (
     <Dialog open>
@@ -72,7 +76,6 @@ export default function InitialModal() {
         </DialogHeader>
 
         <Form {...form}>
-          {/* @ts-ignore*/}
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="space-y-8 px-6">
               <div className="flex items-center justify-center text-center">
