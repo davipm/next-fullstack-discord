@@ -14,6 +14,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
   try {
     const profile = await currentProfile();
     const serverId = req.nextUrl.searchParams.get("serverId");
+    const { channelId } = params;
 
     if (!profile) {
       return res.json({ message: "Unauthorized" }, { status: 401 });
@@ -23,7 +24,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
       return res.json({ message: "Server ID missing" }, { status: 400 });
     }
 
-    if (!params.channelId) {
+    if (!channelId) {
       return res.json({ message: "Channel ID missing" }, { status: 400 });
     }
 
@@ -63,6 +64,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     const profile = await currentProfile();
     const serverId = req.nextUrl.searchParams.get("serverId");
     const { name, type } = await req.json();
+    const { channelId } = params;
 
     if (!profile) {
       return res.json({ message: "Unauthorized" }, { status: 401 });
@@ -72,7 +74,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       return res.json({ message: "Server ID missing" }, { status: 400 });
     }
 
-    if (!params.channelId) {
+    if (!channelId) {
       return res.json({ message: "Channel ID missing" }, { status: 400 });
     }
 
