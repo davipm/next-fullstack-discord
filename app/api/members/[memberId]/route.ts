@@ -10,111 +10,81 @@ type Params = {
 };
 
 export async function DELETE(req: NextRequest, { params }: Params) {
-  try {
-    const profile = await currentProfile();
-    const serverId = req.nextUrl.searchParams.get("serverId");
-    const { memberId } = params;
+  const profile = await currentProfile();
+  const serverId = req.nextUrl.searchParams.get("serverId")!;
+  const memberId = params.memberId!;
 
-    if (!profile) {
-      return res.json({ message: "Unauthorized" }, { status: 401 });
-    }
+  if (!profile) return res.json({ message: "Unauthorized" }, { status: 401 });
 
-    if (!serverId) {
-      return res.json({ message: "Server ID missing" }, { status: 400 });
-    }
-
-    if (!memberId) {
-      return res.json({ message: "Member ID missing" }, { status: 400 });
-    }
-
-    const server = await prisma.server.update({
-      where: {
-        id: serverId,
-        profileId: profile.id,
+  const server = await prisma.server.update({
+    where: {
+      id: serverId,
+      profileId: profile.id,
+    },
+    data: {
+      members: {
+        deleteMany: {
+          id: memberId,
+          profileId: {
+            not: profile.id,
+          },
+        },
       },
-      data: {
-        members: {
-          deleteMany: {
+    },
+    include: {
+      members: {
+        include: {
+          profile: true,
+        },
+        orderBy: {
+          role: "asc",
+        },
+      },
+    },
+  });
+
+  return res.json(server, { status: 200 });
+}
+
+export async function PATCH(req: NextRequest, { params }: Params) {
+  const profile = await currentProfile();
+  const serverId = req.nextUrl.searchParams.get("serverId")!;
+  const memberId = params.memberId!;
+  const role = (await req.json()).role;
+
+  if (!profile) return res.json({ message: "Unauthorized" }, { status: 401 });
+
+  const server = await prisma.server.update({
+    where: {
+      id: serverId,
+      profileId: profile.id,
+    },
+    data: {
+      members: {
+        update: {
+          where: {
             id: memberId,
             profileId: {
               not: profile.id,
             },
           },
-        },
-      },
-      include: {
-        members: {
-          include: {
-            profile: true,
-          },
-          orderBy: {
-            role: "asc",
+          data: {
+            role,
           },
         },
       },
-    });
-
-    return res.json(server, { status: 200 });
-  } catch (error) {
-    console.log("[MEMBERS_ID_DELETE]", error);
-    return res.error();
-  }
-}
-
-export async function PATCH(req: NextRequest, { params }: Params) {
-  try {
-    const profile = await currentProfile();
-    const serverId = req.nextUrl.searchParams.get("serverId");
-    const { role } = await req.json();
-    const { memberId } = params;
-
-    if (!profile) {
-      return res.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    if (!serverId) {
-      return res.json({ message: "Server ID missing" }, { status: 400 });
-    }
-
-    if (!memberId) {
-      return res.json({ message: "Member ID missing" }, { status: 400 });
-    }
-
-    const server = await prisma.server.update({
-      where: {
-        id: serverId,
-        profileId: profile.id,
-      },
-      data: {
-        members: {
-          update: {
-            where: {
-              id: memberId,
-              profileId: {
-                not: profile.id,
-              },
-            },
-            data: {
-              role,
-            },
-          },
+    },
+    include: {
+      members: {
+        include: {
+          profile: true,
+        },
+        orderBy: {
+          role: "asc",
         },
       },
-      include: {
-        members: {
-          include: {
-            profile: true,
-          },
-          orderBy: {
-            role: "asc",
-          },
-        },
-      },
-    });
+    },
+  });
 
-    return res.json(server, { status: 200 });
-  } catch (error) {
-    console.log("[MEMBERS_ID_PATCH]", error);
-    return res.error();
-  }
+  return res.json(server, { status: 200 });
 }
