@@ -10,8 +10,11 @@ export async function GET(req: NextRequest) {
 
   if (!profile) return res.json({ message: "Unauthorized" }, { status: 401 });
 
-  const channelId = req.nextUrl.searchParams.get("channelId")!;
+  const channelId = req.nextUrl.searchParams.get("channelId");
   const cursor = req.nextUrl.searchParams.get("cursor");
+
+  if (!channelId || !cursor)
+    return res.json({ message: "Invalid request" }, { status: 400 });
 
   const messages = await prisma.message.findMany({
     take: MESSAGES_BATCH,

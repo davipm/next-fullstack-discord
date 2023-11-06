@@ -1,61 +1,61 @@
 import { NextRequest, NextResponse as res } from "next/server";
+import * as z from "zod";
 
+import { serverSchema } from "@/app/api/servers/route";
 import currentProfile from "@/lib/current-profile";
 import prisma from "@/lib/db";
 
 type Params = {
-  params: {
-    serverId: string;
-  };
+  params: { serverId: string };
 };
 
 export async function DELETE(req: NextRequest, { params }: Params) {
-  try {
-    const profile = await currentProfile();
-    const { serverId } = params;
+  const profile = await currentProfile();
+  const { serverId } = params;
 
-    if (!profile) {
-      return res.json({ message: "Unauthorized" }, { status: 401 });
-    }
+  if (!profile) return res.json({ message: "Unauthorized" }, { status: 401 });
 
-    await prisma.server.delete({
-      where: {
-        id: serverId,
-        profileId: profile.id,
-      },
-    });
+  if (!serverId)
+    return res.json({ message: "Invalid request" }, { status: 400 });
 
-    return res.json({ message: "Server Deleted!" }, { status: 200 });
-  } catch (error) {
-    console.log("[MEMBERS_ID_DELETE]", error);
-    return res.error();
-  }
+  await prisma.server.delete({
+    where: {
+      id: serverId,
+      profileId: profile.id,
+    },
+  });
+
+  return res.json({ message: "Server Deleted!" }, { status: 200 });
 }
 
 export async function PATCH(req: NextRequest, { params }: Params) {
-  try {
-    const profile = await currentProfile();
-    const { name, imageUrl } = await req.json();
-    const { serverId } = params;
+  const profile = await currentProfile();
+  const body = await req.json();
+  const response = serverSchema.safeParse(body);
 
-    if (!profile) {
-      return res.json({ message: "Unauthorized" }, { status: 401 });
-    }
+  const { serverId } = params;
 
-    const server = await prisma.server.update({
-      where: {
-        id: serverId,
-        profileId: profile.id,
-      },
-      data: {
-        name,
-        imageUrl,
-      },
-    });
-
-    return res.json(server, { status: 200 });
-  } catch (error) {
-    console.log("[MEMBERS_ID_PATCH]", error);
-    return res.error();
+  if (!profile) {
+    return res.json({ message: "Unauthorized" }, { status: 401 });
   }
+
+  if (!serverId)
+    return res.json({ message: "Invalid request" }, { status: 400 });
+
+  if (!response.success) {
+    const { errors } = response.error;
+    return res.json({ message: "Invalid request", errors }, { status: 400 });
+  }
+
+  const { name, imageUrl } = response.data;
+
+  const server = await prisma.server.update({
+    where: {
+      id: serverId,
+      profileId: profile.id,
+    },
+    data: { name, imageUrl },
+  });
+
+  return res.json(server, { status: 200 });
 }

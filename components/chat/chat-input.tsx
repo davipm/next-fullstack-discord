@@ -51,13 +51,9 @@ export default function ChatInput({ apiUrl, type, query, name }: Props) {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    mutate({ content: data.content });
-  };
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit((data) => mutate(data))}>
         <FormField
           control={form.control}
           name="content"

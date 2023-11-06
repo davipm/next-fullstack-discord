@@ -6,7 +6,7 @@ import * as z from "zod";
 import currentProfile from "@/lib/current-profile";
 import prisma from "@/lib/db";
 
-const postSchema = z.object({
+export const serverSchema = z.object({
   name: z.string(),
   imageUrl: z.string().url(),
 });
@@ -14,7 +14,7 @@ const postSchema = z.object({
 export async function POST(req: NextRequest) {
   const profile = await currentProfile();
   const body = await req.json();
-  const response = postSchema.safeParse(body);
+  const response = serverSchema.safeParse(body);
 
   if (!profile) return res.json({ message: "Unauthorized" }, { status: 401 });
 
