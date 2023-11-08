@@ -21,12 +21,8 @@ export async function DELETE(req: NextRequest, { params }: Params) {
       return res.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    if (!serverId) {
+    if (!serverId || !channelId) {
       return res.json({ message: "Server ID missing" }, { status: 400 });
-    }
-
-    if (!channelId) {
-      return res.json({ message: "Channel ID missing" }, { status: 400 });
     }
 
     const server = await prisma.server.update({
@@ -60,7 +56,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
   }
 }
 
-const patchSchema = z.object({
+export const patchSchema = z.object({
   name: z.string().refine((data) => data !== "general", {
     message: "Name cannot be 'general",
   }),
