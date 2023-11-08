@@ -74,3 +74,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.icon-loader {
+  /*@apply h-7 w-7 text-zinc-500 animate-spin my-4;*/
+  --tw-text-opacity: 1;
+
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: rgb(113 113 122 / var(--tw-text-opacity));
+  animation: spin 1s linear infinite;
+}

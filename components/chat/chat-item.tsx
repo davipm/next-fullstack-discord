@@ -27,7 +27,7 @@ interface Props {
     profile: Profile;
   };
   timestamp: string;
-  fileUrl: string;
+  fileUrl: string | null;
   deleted: boolean;
   currentMember: Member;
   isUpdated: boolean;
@@ -134,7 +134,7 @@ export default function ChatItem({ id, content, member, ...rest }: Props) {
             </span>
           </div>
 
-          {isImage && (
+          {isImage && rest.fileUrl && (
             <a
               href={rest.fileUrl}
               target="_blank"
@@ -150,7 +150,7 @@ export default function ChatItem({ id, content, member, ...rest }: Props) {
             </a>
           )}
 
-          {isPDF && (
+          {isPDF && rest.fileUrl && (
             <div className="relative flex items-center p-2 mt-2 rounded-md bg-background/10">
               <FileIcon className="h-10 w-10 fill-indigo-200 stroke-indigo-400" />
               <a
