@@ -8,9 +8,5 @@ export default async function currentProfilePages(req: NextApiRequest) {
 
   if (!userId) return null;
 
-  return prisma.profile.findUnique({
-    where: {
-      userId,
-    },
-  });
+  return prisma.profile.findUnique({ where: { userId } });
 }

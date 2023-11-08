@@ -7,9 +7,5 @@ export default async function currentProfile() {
 
   if (!userId) return null;
 
-  return prisma.profile.findUnique({
-    where: {
-      userId,
-    },
-  });
+  return prisma.profile.findUnique({ where: { userId } });
 }
