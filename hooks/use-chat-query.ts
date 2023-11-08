@@ -10,12 +10,7 @@ interface Props {
   paramValue: string;
 }
 
-export default function useChatQuery({
-  queryKey,
-  paramKey,
-  paramValue,
-  apiUrl,
-}: Props) {
+export default function useChatQuery({ queryKey, paramKey, ...rest }: Props) {
   const { isConnected } = useSocket();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
@@ -24,10 +19,10 @@ export default function useChatQuery({
       queryFn: async ({ pageParam }) => {
         const url = qs.stringifyUrl(
           {
-            url: apiUrl,
+            url: rest.apiUrl,
             query: {
               cursor: pageParam,
-              [paramKey]: paramValue,
+              [paramKey]: rest.paramValue,
             },
           },
           { skipNull: true },

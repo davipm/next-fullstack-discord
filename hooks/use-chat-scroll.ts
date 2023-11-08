@@ -8,13 +8,7 @@ interface Props {
   count: number;
 }
 
-export default function useChatScroll({
-  chatRef,
-  bottomRef,
-  shouldLoadMore,
-  loadMore,
-  count,
-}: Props) {
+export default function useChatScroll({ chatRef, count, ...rest }: Props) {
   const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
@@ -22,7 +16,7 @@ export default function useChatScroll({
 
     const handleScroll = () => {
       const scrollTop = topDiv?.scrollTop;
-      if (scrollTop === 0 && shouldLoadMore) loadMore();
+      if (scrollTop === 0 && rest.shouldLoadMore) rest.loadMore();
     };
 
     topDiv?.addEventListener("scroll", handleScroll);
@@ -30,10 +24,10 @@ export default function useChatScroll({
     return () => {
       topDiv?.removeEventListener("scroll", handleScroll);
     };
-  }, [chatRef, loadMore, shouldLoadMore]);
+  }, [chatRef, rest, rest.loadMore, rest.shouldLoadMore]);
 
   useEffect(() => {
-    const bottomDiv = bottomRef?.current;
+    const bottomDiv = rest.bottomRef?.current;
     const topDiv = chatRef?.current;
 
     const shouldAutoScroll = () => {
@@ -54,7 +48,7 @@ export default function useChatScroll({
 
     if (shouldAutoScroll()) {
       const scrollTimeout = setTimeout(() => {
-        bottomRef.current?.scrollIntoView({
+        rest.bottomRef.current?.scrollIntoView({
           behavior: "smooth",
         });
       }, 100);
@@ -63,5 +57,5 @@ export default function useChatScroll({
         clearTimeout(scrollTimeout);
       };
     }
-  }, [bottomRef, chatRef, hasInitialized, count]);
+  }, [rest.bottomRef, chatRef, hasInitialized, count]);
 }
