@@ -23,9 +23,7 @@ import { useModal } from "@/store";
 interface Props {
   id: string;
   content: string;
-  member: Member & {
-    profile: Profile;
-  };
+  member: Member & { profile: Profile };
   timestamp: string;
   fileUrl: string | null;
   deleted: boolean;

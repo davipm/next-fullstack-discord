@@ -14,9 +14,7 @@ import useChatSocket from "@/hooks/use-chat-socket";
 const DATE_FORMAT = "d MMM yyyy, HH:mm";
 
 type MessageWithMemberWithProfile = Message & {
-  member: Member & {
-    profile: Profile;
-  };
+  member: Member & { profile: Profile };
 };
 
 interface Props {
