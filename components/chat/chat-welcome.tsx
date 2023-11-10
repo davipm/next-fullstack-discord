@@ -13,7 +13,7 @@ export default function ChatWelcome({ name, type }: Props) {
           <Hash className="h-12 w-12 text-white" />
         </div>
       )}
-      <p className="">
+      <p className="text-xl md:text-3xl font-bold">
         {type === "channel" ? "Welcome to #" : ""}
         {name}
       </p>
