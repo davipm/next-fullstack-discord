@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse as res } from "next/server";
-import * as z from "zod";
 
-import { serverSchema } from "@/app/api/servers/route";
 import currentProfile from "@/lib/current-profile";
 import prisma from "@/lib/db";
+import { userSchema } from "@/schemas";
 
 type Params = {
   params: { serverId: string };
@@ -31,7 +30,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
 export async function PATCH(req: NextRequest, { params }: Params) {
   const profile = await currentProfile();
   const body = await req.json();
-  const response = serverSchema.safeParse(body);
+  const response = userSchema.safeParse(body);
 
   const { serverId } = params;
 

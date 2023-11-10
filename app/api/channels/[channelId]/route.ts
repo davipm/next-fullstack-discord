@@ -1,15 +1,10 @@
 import { MemberRole } from "@prisma/client";
 import { NextRequest, NextResponse as res } from "next/server";
 
-import { patchSchema } from "@/app/api/channels/route";
 import currentProfile from "@/lib/current-profile";
 import prisma from "@/lib/db";
-
-type Params = {
-  params: {
-    channelId: string;
-  };
-};
+import { channelsSchema } from "@/schemas";
+import { ChannelsParams as Params } from "@/types";
 
 export async function DELETE(req: NextRequest, { params }: Params) {
   try {
@@ -61,7 +56,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     const profile = await currentProfile();
     const body = await req.json();
     const serverId = req.nextUrl.searchParams.get("serverId");
-    const response = patchSchema.safeParse(body);
+    const response = channelsSchema.safeParse(body);
     const { channelId } = params;
 
     if (!profile) {

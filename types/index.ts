@@ -19,3 +19,11 @@ export type NextApiResponseServerIo = NextApiResponse & {
 export type PropsChildren = {
   children: ReactNode;
 };
+
+export type ChannelsParams = {
+  params: { channelId: string };
+};
+
+export type MembersParams = {
+  params: { memberId: string };
+};

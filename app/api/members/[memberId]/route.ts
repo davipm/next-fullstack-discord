@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse as res } from "next/server";
-import * as z from "zod";
 
 import currentProfile from "@/lib/current-profile";
 import prisma from "@/lib/db";
-
-type Params = {
-  params: { memberId: string };
-};
+import { memberSchema } from "@/schemas";
+import { MembersParams as Params } from "@/types";
 
 export async function DELETE(req: NextRequest, { params }: Params) {
   const profile = await currentProfile();
@@ -48,14 +45,14 @@ export async function DELETE(req: NextRequest, { params }: Params) {
   return res.json(server, { status: 200 });
 }
 
-const patchSchema = z.object({
-  role: z.string(),
-});
+// const patchSchema = z.object({
+//   role: z.string(),
+// });
 
 export async function PATCH(req: NextRequest, { params }: Params) {
   const profile = await currentProfile();
   const body = await req.json();
-  const response = patchSchema.safeParse(body);
+  const response = memberSchema.safeParse(body);
   const serverId = req.nextUrl.searchParams.get("serverId")!;
   const { memberId } = params;
 

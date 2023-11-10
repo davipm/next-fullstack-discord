@@ -1,15 +1,10 @@
 import { MemberRole } from "@prisma/client";
 import { NextRequest, NextResponse as res } from "next/server";
-import * as z from "zod";
 
 import currentProfile from "@/lib/current-profile";
 import prisma from "@/lib/db";
-
-type Params = {
-  params: {
-    channelId: string;
-  };
-};
+import { channelsSchema } from "@/schemas";
+import { ChannelsParams as Params } from "@/types";
 
 export async function DELETE(req: NextRequest, { params }: Params) {
   try {
@@ -56,17 +51,10 @@ export async function DELETE(req: NextRequest, { params }: Params) {
   }
 }
 
-export const patchSchema = z.object({
-  name: z.string().refine((data) => data !== "general", {
-    message: "Name cannot be 'general",
-  }),
-  type: z.string(),
-});
-
 export async function PATCH(req: NextRequest, { params }: Params) {
   const profile = await currentProfile();
   const body = await req.json();
-  const response = patchSchema.safeParse(body);
+  const response = channelsSchema.safeParse(body);
   const { channelId } = params;
 
   const serverId = req.nextUrl.searchParams.get("serverId");

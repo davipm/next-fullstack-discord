@@ -1,20 +1,15 @@
 import { MemberRole } from "@prisma/client";
 import { NextRequest, NextResponse as res } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import * as z from "zod";
 
 import currentProfile from "@/lib/current-profile";
 import prisma from "@/lib/db";
-
-export const serverSchema = z.object({
-  name: z.string(),
-  imageUrl: z.string().url(),
-});
+import { userSchema } from "@/schemas";
 
 export async function POST(req: NextRequest) {
   const profile = await currentProfile();
   const body = await req.json();
-  const response = serverSchema.safeParse(body);
+  const response = userSchema.safeParse(body);
 
   if (!profile) return res.json({ message: "Unauthorized" }, { status: 401 });
 
