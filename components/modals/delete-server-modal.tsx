@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 
 // import { Container } from "./styles";
@@ -7,7 +9,7 @@ export default function DeleteServerModal() {
 
   return (
     <div>
-      <p></p>
+      <p>DeleteServerModal</p>
     </div>
   );
 }

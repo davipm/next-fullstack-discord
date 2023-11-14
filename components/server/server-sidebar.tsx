@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 
 type Props = {
@@ -10,7 +12,7 @@ export default function ServerSidebar({ serverId }: Props) {
 
   return (
     <div>
-      <p></p>
+      <p>ServerSidebar</p>
     </div>
   );
 }
