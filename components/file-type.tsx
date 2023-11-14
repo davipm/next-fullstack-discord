@@ -25,7 +25,13 @@ export default function FileType({ onChange, value, fileType }: FileTypeProps) {
       {fileType === "pdf" ? (
         <FileIcon className="h-10 w-10 fill-indigo-200 stroke-indigo-400" />
       ) : (
-        <Image src={value} alt="Upload" className="rounded-full" fill />
+        <Image
+          src={value}
+          alt="Upload"
+          className="rounded-full"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
       )}
 
       {fileType === "pdf" && (
