@@ -22,7 +22,7 @@ export default function ChatHeader({ serverId, imageUrl, name, type }: Props) {
       {type === "conversation" && (
         <UserAvatar src={imageUrl} className="h-8 w-8 md:h-8 md:w-8 mr-2" />
       )}
-      <p className="font-semibold text-base text-black dark:text-white">
+      <p className="font-semibold text-base text-black dark:text-white mr-2">
         {name}
       </p>
       <div>{type === "conversation" && <ChatVideoButton />}</div>
