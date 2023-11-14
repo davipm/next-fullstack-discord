@@ -144,6 +144,7 @@ export default function ChatItem({ id, content, member, ...rest }: Props) {
                 alt={content}
                 fill
                 className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </a>
           )}
