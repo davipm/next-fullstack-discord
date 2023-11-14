@@ -20,7 +20,7 @@ export default function NavigationItem({ id, name, imageUrl }: Props) {
     <ActionTooltip side="right" label={name} align="center">
       <button
         type="button"
-        onClick={() => router.push(`/server/${id}`)}
+        onClick={() => router.push(`/servers/${id}`)}
         className="group relative flex items-center"
       >
         <div
@@ -31,7 +31,7 @@ export default function NavigationItem({ id, name, imageUrl }: Props) {
           )}
         />
 
-        <div
+        <figure
           className={cn(
             "relative group flex mx-3 h-[48px] w-[48px] rounded-[24px] group-hover:rounded-[16px] transition-all overflow-hidden",
             params?.serverId === id &&
@@ -45,7 +45,7 @@ export default function NavigationItem({ id, name, imageUrl }: Props) {
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-        </div>
+        </figure>
       </button>
     </ActionTooltip>
   );
