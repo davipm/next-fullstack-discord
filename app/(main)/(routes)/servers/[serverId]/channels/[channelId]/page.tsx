@@ -34,7 +34,7 @@ export default async function Page({ params }: Props) {
     },
   });
 
-  if (!channel || !member) return redirect(`/server/${params.serverId}`);
+  if (!channel || !member) return redirect(`/servers/${params.serverId}`);
 
   return (
     <div className="bg-white dark:bg-[#313338] flex flex-col h-full">

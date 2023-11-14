@@ -26,7 +26,7 @@ export default async function InviteCodePage({ params }: Props) {
     },
   });
 
-  if (existingServer) return redirect(`/server/${existingServer.id}`);
+  if (existingServer) return redirect(`/servers/${existingServer.id}`);
 
   const server = await prisma.server.update({
     where: {
@@ -39,7 +39,7 @@ export default async function InviteCodePage({ params }: Props) {
     },
   });
 
-  if (server) return redirect(`/server/${server.id}`);
+  if (server) return redirect(`/servers/${server.id}`);
 
   return null;
 }

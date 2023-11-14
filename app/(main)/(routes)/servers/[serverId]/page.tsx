@@ -15,7 +15,7 @@ export default async function Page({ params }: Props) {
 
   const server = await prisma.server.findFirst({
     where: {
-      inviteCode: params.serverId,
+      id: params.serverId,
       members: {
         some: {
           profileId: profile.id,
@@ -38,5 +38,5 @@ export default async function Page({ params }: Props) {
 
   if (initialChannel?.name !== "general") return null;
 
-  return redirect(`/server/${params.serverId}/channels/${initialChannel.id}`);
+  return redirect(`/servers/${params.serverId}/channels/${initialChannel.id}`);
 }

@@ -39,7 +39,7 @@ export default async function Page({ params, searchParams }: Props) {
     params.memberId,
   );
 
-  if (!conversation) return redirect(`/server/${params.serverId}`);
+  if (!conversation) return redirect(`/servers/${params.serverId}`);
 
   const { memberTwo, memberOne } = conversation;
   const otherMember =
