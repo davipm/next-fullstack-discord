@@ -38,7 +38,12 @@ export default function NavigationItem({ id, name, imageUrl }: Props) {
               "bg-primary/10 text-primary rounded-[16px]",
           )}
         >
-          <Image fill src={imageUrl} alt={name} />
+          <Image
+            fill
+            src={imageUrl}
+            alt={name}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
         </div>
       </button>
     </ActionTooltip>
