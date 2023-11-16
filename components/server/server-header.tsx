@@ -1,10 +1,16 @@
 "use client";
 
+import { MemberRole } from "@prisma/client";
 import { useState } from "react";
 
-// import { Container } from "./styles";
+import { ServerWithMembersWithProfiles } from "@/types";
 
-export default function ServerHeader() {
+interface Props {
+  server: ServerWithMembersWithProfiles;
+  role?: MemberRole;
+}
+
+export default function ServerHeader({ server, role }: Props) {
   const [item, setItem] = useState(null);
 
   return (

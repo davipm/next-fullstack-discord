@@ -2,9 +2,21 @@
 
 import { useState } from "react";
 
-// import { Container } from "./styles";
+interface Props {
+  data: {
+    label: string;
+    type: "channel" | "member";
+    data:
+      | {
+          icon: React.ReactNode;
+          name: string;
+          id: string;
+        }[]
+      | undefined;
+  }[];
+}
 
-export default function ServerSearch() {
+export default function ServerSearch({ data }: Props) {
   const [item, setItem] = useState(null);
 
   return (
