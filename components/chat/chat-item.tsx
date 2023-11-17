@@ -55,15 +55,14 @@ export default function ChatItem({ id, content, member, ...rest }: Props) {
     router.push(`/servers/${params?.serverId}/conversations/${member.id}`);
   };
 
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape" || event.code === "Escape") {
+      setIsEditing(true);
+    }
+  };
+
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" || event.code === "Escape") {
-        setIsEditing(true);
-      }
-    };
-
     window.addEventListener("keydown", handleKeyDown);
-
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 

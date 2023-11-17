@@ -28,16 +28,15 @@ export default function ServerSearch({ data }: Props) {
   const router = useRouter();
   const params = useParams() as { serverId: string | null };
 
+  const down = (e: KeyboardEvent) => {
+    if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      setOpen((prevState) => !prevState);
+    }
+  };
+
   useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((prevState) => !prevState);
-      }
-    };
-
     window.addEventListener("keydown", down);
-
     return () => window.removeEventListener("keydown", down);
   }, []);
 
