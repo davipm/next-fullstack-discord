@@ -28,12 +28,14 @@ export const SocketProvider: FC<{ children?: ReactNode | undefined }> = (
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
-  // TODO: check the Client IO connection
   useEffect(() => {
-    const socketInstance = ClientIO(process.env.NEXT_PUBLIC_SITE_URL!, {
-      path: "/api/socket/io",
-      addTrailingSlash: false,
-    });
+    const socketInstance = new (ClientIO as any)(
+      process.env.NEXT_PUBLIC_SITE_URL!,
+      {
+        path: "/api/socket/io",
+        addTrailingSlash: false,
+      },
+    );
 
     socketInstance.on("connect", () => {
       setIsConnected(true);
@@ -45,9 +47,7 @@ export const SocketProvider: FC<{ children?: ReactNode | undefined }> = (
 
     setSocket(socketInstance);
 
-    return () => {
-      socketInstance.disconnect();
-    };
+    return () => socketInstance.disconnect();
   }, []);
 
   return (
