@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useModal } from "@/hooks/use-modal-store";
 import { EmojiPicker } from "@/components/emoji-picker";
+import { useMutation } from "@tanstack/react-query";
 
 interface ChatInputProps {
   apiUrl: string;
@@ -35,27 +36,19 @@ export const ChatInput = ({ apiUrl, query, name, type }: ChatInputProps) => {
     },
   });
 
-  const isLoading = form.formState.isSubmitting;
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const url = qs.stringifyUrl({
-        url: apiUrl,
-        query,
-      });
-
-      await axios.post(url, values);
-
+  const { mutate, isPending: isLoading } = useMutation({
+    mutationFn: (values: z.infer<typeof formSchema>) => {
+      return axios.post(qs.stringifyUrl({ url: apiUrl, query }), values);
+    },
+    onSuccess: () => {
       form.reset();
       router.refresh();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    },
+  });
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit((data) => mutate(data))}>
         <FormField
           control={form.control}
           name="content"

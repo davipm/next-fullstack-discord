@@ -18,6 +18,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
+import { useMutation } from "@tanstack/react-query";
 
 interface ChatItemProps {
   id: string;
@@ -62,22 +63,18 @@ export const ChatItem = ({
   const router = useRouter();
 
   const onMemberClick = () => {
-    if (member.id === currentMember.id) {
-      return;
-    }
-
+    if (member.id === currentMember.id) return;
     router.push(`/servers/${params?.serverId}/conversations/${member.id}`);
   };
 
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Escape" || event.keyCode === 27) {
+      setIsEditing(false);
+    }
+  };
+
   useEffect(() => {
-    const handleKeyDown = (event: any) => {
-      if (event.key === "Escape" || event.keyCode === 27) {
-        setIsEditing(false);
-      }
-    };
-
     window.addEventListener("keydown", handleKeyDown);
-
     return () => window.removeEventListener("keyDown", handleKeyDown);
   }, []);
 
@@ -88,23 +85,18 @@ export const ChatItem = ({
     },
   });
 
-  const isLoading = form.formState.isSubmitting;
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const url = qs.stringifyUrl({
-        url: `${socketUrl}/${id}`,
-        query: socketQuery,
-      });
-
-      await axios.patch(url, values);
-
+  const { mutate, isPending: isLoading } = useMutation({
+    mutationFn: (values: z.infer<typeof formSchema>) => {
+      return axios.patch(
+        qs.stringifyUrl({ url: `${socketUrl}/${id}`, query: socketQuery }),
+        values,
+      );
+    },
+    onSuccess: () => {
       form.reset();
       setIsEditing(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    },
+  });
 
   useEffect(() => {
     form.reset({
@@ -196,7 +188,7 @@ export const ChatItem = ({
             <Form {...form}>
               <form
                 className="flex items-center w-full gap-x-2 pt-2"
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={form.handleSubmit((data) => mutate(data))}
               >
                 <FormField
                   control={form.control}

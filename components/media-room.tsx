@@ -1,45 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { LiveKitRoom, VideoConference } from "@livekit/components-react";
 import "@livekit/components-styles";
-import { Channel } from "@prisma/client";
+
 import { useUser } from "@clerk/nextjs";
+import { LiveKitRoom, VideoConference } from "@livekit/components-react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { Loader2 } from "lucide-react";
 
-interface MediaRoomProps {
+interface Props {
   chatId: string;
   video: boolean;
   audio: boolean;
 }
 
-export const MediaRoom = ({ chatId, video, audio }: MediaRoomProps) => {
+export function MediaRoom({ chatId, video, audio }: Props) {
   const { user } = useUser();
-  const [token, setToken] = useState("");
 
-  useEffect(() => {
-    if (!user?.firstName || !user?.lastName) return;
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ["videoCall"],
+    queryFn: async () => {
+      const name = `${user?.firstName} ${user?.lastName}`;
 
-    const name = `${user.firstName} ${user.lastName}`;
+      const { data } = await axios.get<{ token: string }>(
+        `/api/livekit?room=${chatId}&username=${name}`,
+      );
 
-    (async () => {
-      try {
-        const resp = await fetch(
-          `/api/livekit?room=${chatId}&username=${name}`,
-        );
-        const data = await resp.json();
-        setToken(data.token);
-      } catch (e) {
-        console.log(e);
-      }
-    })();
-  }, [user?.firstName, user?.lastName, chatId]);
+      return data.token;
+    },
+    enabled: !!user?.firstName || !!user?.lastName,
+  });
 
-  if (token === "") {
+  if (isPending) {
     return (
       <div className="flex flex-col flex-1 justify-center items-center">
         <Loader2 className="h-7 w-7 text-zinc-500 animate-spin my-4" />
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">Loading...</p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col flex-1 justify-center items-center">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">Error!</p>
       </div>
     );
   }
@@ -48,12 +52,12 @@ export const MediaRoom = ({ chatId, video, audio }: MediaRoomProps) => {
     <LiveKitRoom
       data-lk-theme="default"
       serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
-      token={token}
-      connect={true}
+      token={data}
       video={video}
       audio={audio}
+      connect
     >
       <VideoConference />
     </LiveKitRoom>
   );
-};
+}

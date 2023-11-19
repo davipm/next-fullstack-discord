@@ -21,8 +21,6 @@ export const DeleteMessageModal = () => {
   const isModalOpen = isOpen && type === "deleteMessage";
   const { apiUrl, query } = data;
 
-  console.log({ apiUrl, query });
-
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: () => {
       return axios.delete(qs.stringifyUrl({ url: apiUrl || "", query }));
