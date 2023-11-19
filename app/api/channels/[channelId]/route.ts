@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { channelId: string } }
+  { params }: { params: { channelId: string } },
 ) {
   try {
     const profile = await currentProfile();
@@ -34,9 +34,9 @@ export async function DELETE(
             profileId: profile.id,
             role: {
               in: [MemberRole.ADMIN, MemberRole.MODERATOR],
-            }
-          }
-        }
+            },
+          },
+        },
       },
       data: {
         channels: {
@@ -44,10 +44,10 @@ export async function DELETE(
             id: params.channelId,
             name: {
               not: "general",
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     });
 
     return NextResponse.json(server);
@@ -59,7 +59,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { channelId: string } }
+  { params }: { params: { channelId: string } },
 ) {
   try {
     const profile = await currentProfile();
@@ -92,9 +92,9 @@ export async function PATCH(
             profileId: profile.id,
             role: {
               in: [MemberRole.ADMIN, MemberRole.MODERATOR],
-            }
-          }
-        }
+            },
+          },
+        },
       },
       data: {
         channels: {
@@ -108,10 +108,10 @@ export async function PATCH(
             data: {
               name,
               type,
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     });
 
     return NextResponse.json(server);
