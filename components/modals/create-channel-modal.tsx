@@ -1,6 +1,5 @@
 "use client";
 
-import qs from "query-string";
 import axios from "axios";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,6 +49,7 @@ const formSchema = z.object({
 
 export const CreateChannelModal = () => {
   const { isOpen, onClose, type, data } = useModal();
+
   const router = useRouter();
   const params = useParams();
 
@@ -74,14 +74,7 @@ export const CreateChannelModal = () => {
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => {
-      const url = qs.stringifyUrl({
-        url: "/api/channels",
-        query: { serverId: params?.serverId },
-      });
-
-      console.log({ url });
-
-      return axios.post(url, values);
+      return axios.post(`/api/channels?serverId=${params?.serverId}`, values);
     },
     onSuccess: () => {
       form.reset();

@@ -21,9 +21,7 @@ export const ModalProvider = () => {
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) {
-    return null;
-  }
+  if (!isMounted) return null;
 
   return (
     <>
@@ -39,5 +37,5 @@ export const ModalProvider = () => {
       <MessageFileModal />
       <DeleteMessageModal />
     </>
-  )
-}
+  );
+};

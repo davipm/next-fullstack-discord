@@ -2,7 +2,6 @@
 
 import qs from "query-string";
 import axios from "axios";
-import { useState } from "react";
 
 import {
   Dialog,
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/use-modal-store";
 import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
 
 export const DeleteMessageModal = () => {
   const { isOpen, onClose, type, data } = useModal();
@@ -21,25 +21,16 @@ export const DeleteMessageModal = () => {
   const isModalOpen = isOpen && type === "deleteMessage";
   const { apiUrl, query } = data;
 
-  const [isLoading, setIsLoading] = useState(false);
+  console.log({ apiUrl, query });
 
-  const onClick = async () => {
-    try {
-      setIsLoading(true);
-      const url = qs.stringifyUrl({
-        url: apiUrl || "",
-        query,
-      });
-
-      await axios.delete(url);
-
+  const { mutate, isPending: isLoading } = useMutation({
+    mutationFn: () => {
+      return axios.delete(qs.stringifyUrl({ url: apiUrl || "", query }));
+    },
+    onSuccess: () => {
       onClose();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+    },
+  });
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
@@ -55,17 +46,13 @@ export const DeleteMessageModal = () => {
         </DialogHeader>
         <DialogFooter className="bg-gray-100 px-6 py-4">
           <div className="flex items-center justify-between w-full">
-            <Button
-              disabled={isLoading}
-              onClick={onClose}
-              variant="ghost"
-            >
+            <Button disabled={isLoading} onClick={onClose} variant="ghost">
               Cancel
             </Button>
             <Button
               disabled={isLoading}
               variant="primary"
-              onClick={onClick}
+              onClick={() => mutate()}
             >
               Confirm
             </Button>
@@ -73,5 +60,5 @@ export const DeleteMessageModal = () => {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

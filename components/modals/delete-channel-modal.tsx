@@ -1,6 +1,5 @@
 "use client";
 
-import qs from "query-string";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -25,14 +24,7 @@ export const DeleteChannelModal = () => {
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: () => {
-      const url = qs.stringifyUrl({
-        url: `/api/channels/${channel?.id}`,
-        query: {
-          serverId: server?.id,
-        },
-      });
-
-      return axios.delete(url);
+      return axios.post(`/api/channels?serverId=${server?.id}`);
     },
     onSuccess: () => {
       onClose();
