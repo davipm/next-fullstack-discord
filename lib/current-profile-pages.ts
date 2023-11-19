@@ -1,12 +1,18 @@
-import { getAuth } from "@clerk/nextjs/server";
-import { NextApiRequest } from "next";
+import {NextApiRequest} from "next";
+import {getAuth} from "@clerk/nextjs/server";
 
-import prisma from "@/lib/db";
+import { db } from "@/lib/db";
 
-export default async function currentProfilePages(req: NextApiRequest) {
+export const currentProfilePages = async (req: NextApiRequest) => {
   const { userId } = getAuth(req);
 
-  if (!userId) return null;
+  if (!userId) {
+    return null;
+  }
 
-  return prisma.profile.findUnique({ where: { userId } });
+  return db.profile.findUnique({
+    where: {
+      userId
+    }
+  });
 }

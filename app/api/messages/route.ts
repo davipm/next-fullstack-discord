@@ -1,32 +1,83 @@
-import { NextRequest, NextResponse as res } from "next/server";
+import { NextResponse } from "next/server";
+import { Message } from "@prisma/client";
 
-import currentProfile from "@/lib/current-profile";
-import prisma from "@/lib/db";
+import { currentProfile } from "@/lib/current-profile";
+import { db } from "@/lib/db";
 
 const MESSAGES_BATCH = 10;
 
-export async function GET(req: NextRequest) {
-  const profile = await currentProfile();
+export async function GET(
+  req: Request
+) {
+  try {
+    const profile = await currentProfile();
+    const { searchParams } = new URL(req.url);
 
-  if (!profile) return res.json({ message: "Unauthorized" }, { status: 401 });
+    const cursor = searchParams.get("cursor");
+    const channelId = searchParams.get("channelId");
 
-  const channelId = req.nextUrl.searchParams.get("channelId");
-  const cursor = req.nextUrl.searchParams.get("cursor");
+    if (!profile) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+  
+    if (!channelId) {
+      return new NextResponse("Channel ID missing", { status: 400 });
+    }
 
-  if (!channelId || !cursor)
-    return res.json({ message: "Invalid request" }, { status: 400 });
+    let messages: Message[] = [];
 
-  const messages = await prisma.message.findMany({
-    take: MESSAGES_BATCH,
-    skip: cursor ? 1 : 0,
-    cursor: cursor ? { id: cursor } : undefined,
-    where: { channelId },
-    include: { member: { include: { profile: true } } },
-    orderBy: { createdAt: "desc" },
-  });
+    if (cursor) {
+      messages = await db.message.findMany({
+        take: MESSAGES_BATCH,
+        skip: 1,
+        cursor: {
+          id: cursor,
+        },
+        where: {
+          channelId,
+        },
+        include: {
+          member: {
+            include: {
+              profile: true,
+            }
+          }
+        },
+        orderBy: {
+          createdAt: "desc",
+        }
+      })
+    } else {
+      messages = await db.message.findMany({
+        take: MESSAGES_BATCH,
+        where: {
+          channelId,
+        },
+        include: {
+          member: {
+            include: {
+              profile: true,
+            }
+          }
+        },
+        orderBy: {
+          createdAt: "desc",
+        }
+      });
+    }
 
-  const nextCursor =
-    messages.length === MESSAGES_BATCH ? messages.at(-1)!.id : null;
+    let nextCursor = null;
 
-  return res.json({ items: messages, nextCursor }, { status: 200 });
+    if (messages.length === MESSAGES_BATCH) {
+      nextCursor = messages[MESSAGES_BATCH - 1].id;
+    }
+
+    return NextResponse.json({
+      items: messages,
+      nextCursor
+    });
+  } catch (error) {
+    console.log("[MESSAGES_GET]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
 }

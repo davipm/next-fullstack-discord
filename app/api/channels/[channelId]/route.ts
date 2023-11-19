@@ -1,26 +1,32 @@
+import { NextResponse } from "next/server";
 import { MemberRole } from "@prisma/client";
-import { NextRequest, NextResponse as res } from "next/server";
 
-import currentProfile from "@/lib/current-profile";
-import prisma from "@/lib/db";
-import { channelsSchema } from "@/schemas";
-import { ChannelsParams as Params } from "@/types";
+import { currentProfile } from "@/lib/current-profile";
+import { db } from "@/lib/db";
 
-export async function DELETE(req: NextRequest, { params }: Params) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: { channelId: string } }
+) {
   try {
     const profile = await currentProfile();
-    const serverId = req.nextUrl.searchParams.get("serverId");
-    const { channelId } = params;
+    const { searchParams } = new URL(req.url);
+
+    const serverId = searchParams.get("serverId");
 
     if (!profile) {
-      return res.json({ message: "Unauthorized" }, { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    if (!serverId || !channelId) {
-      return res.json({ message: "Server ID missing" }, { status: 400 });
+    if (!serverId) {
+      return new NextResponse("Server ID missing", { status: 400 });
     }
 
-    const server = await prisma.server.update({
+    if (!params.channelId) {
+      return new NextResponse("Channel ID missing", { status: 400 });
+    }
+
+    const server = await db.server.update({
       where: {
         id: serverId,
         members: {
@@ -28,9 +34,9 @@ export async function DELETE(req: NextRequest, { params }: Params) {
             profileId: profile.id,
             role: {
               in: [MemberRole.ADMIN, MemberRole.MODERATOR],
-            },
-          },
-        },
+            }
+          }
+        }
       },
       data: {
         channels: {
@@ -38,42 +44,47 @@ export async function DELETE(req: NextRequest, { params }: Params) {
             id: params.channelId,
             name: {
               not: "general",
-            },
-          },
-        },
-      },
+            }
+          }
+        }
+      }
     });
 
-    return res.json(server, { status: 200 });
+    return NextResponse.json(server);
   } catch (error) {
     console.log("[CHANNEL_ID_DELETE]", error);
-    return res.error();
+    return new NextResponse("Internal Error", { status: 500 });
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: Params) {
+export async function PATCH(
+  req: Request,
+  { params }: { params: { channelId: string } }
+) {
   try {
     const profile = await currentProfile();
-    const body = await req.json();
-    const serverId = req.nextUrl.searchParams.get("serverId");
-    const response = channelsSchema.safeParse(body);
-    const { channelId } = params;
+    const { name, type } = await req.json();
+    const { searchParams } = new URL(req.url);
+
+    const serverId = searchParams.get("serverId");
 
     if (!profile) {
-      return res.json({ message: "Unauthorized" }, { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    if (!serverId || !channelId)
-      return res.json({ message: "Invalid request" }, { status: 400 });
-
-    if (!response.success) {
-      const { errors } = response.error;
-      return res.json({ message: "Invalid request", errors }, { status: 400 });
+    if (!serverId) {
+      return new NextResponse("Server ID missing", { status: 400 });
     }
 
-    const { name, type } = response.data;
+    if (!params.channelId) {
+      return new NextResponse("Channel ID missing", { status: 400 });
+    }
 
-    const server = await prisma.server.update({
+    if (name === "general") {
+      return new NextResponse("Name cannot be 'general'", { status: 400 });
+    }
+
+    const server = await db.server.update({
       where: {
         id: serverId,
         members: {
@@ -81,30 +92,31 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             profileId: profile.id,
             role: {
               in: [MemberRole.ADMIN, MemberRole.MODERATOR],
-            },
-          },
-        },
+            }
+          }
+        }
       },
       data: {
         channels: {
-          // @ts-ignore
           update: {
             where: {
               id: params.channelId,
-              NOT: { name: "general" },
+              NOT: {
+                name: "general",
+              },
             },
             data: {
               name,
               type,
-            },
-          },
-        },
-      },
+            }
+          }
+        }
+      }
     });
 
-    return res.json(server, { status: 200 });
+    return NextResponse.json(server);
   } catch (error) {
     console.log("[CHANNEL_ID_PATCH]", error);
-    return res.error();
+    return new NextResponse("Internal Error", { status: 500 });
   }
 }

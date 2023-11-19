@@ -1,7 +1,9 @@
-import { PropsChildren } from "@/types";
-
-export default function AuthLayout({ children }: PropsChildren) {
-  return (
-    <div className="h-screen flex items-center justify-center">{children}</div>
-  );
+const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+  return ( 
+    <div className="h-full flex items-center justify-center">
+      {children}
+    </div>
+   );
 }
+ 
+export default AuthLayout;

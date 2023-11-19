@@ -1,20 +1,24 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import * as z from "zod";
 import axios from "axios";
-import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import qs from "query-string";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-import EmojiPicker from "@/components/emoji-picker";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useModal } from "@/store";
+import { useModal } from "@/hooks/use-modal-store";
+import { EmojiPicker } from "@/components/emoji-picker";
 
-interface Props {
+interface ChatInputProps {
   apiUrl: string;
   query: Record<string, any>;
   name: string;
@@ -25,35 +29,43 @@ const formSchema = z.object({
   content: z.string().min(1),
 });
 
-export default function ChatInput({ apiUrl, type, query, name }: Props) {
+export const ChatInput = ({
+  apiUrl,
+  query,
+  name,
+  type,
+}: ChatInputProps) => {
   const { onOpen } = useModal();
   const router = useRouter();
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: "",
-    },
+    }
   });
 
-  const { mutate, isPending: isLoading } = useMutation({
-    mutationFn: (values: z.infer<typeof formSchema>) => {
+  const isLoading = form.formState.isSubmitting;
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
       const url = qs.stringifyUrl({
         url: apiUrl,
         query,
       });
 
-      return axios.post(url, values);
-    },
-    onSuccess: () => {
+      await axios.post(url, values);
+
       form.reset();
       router.refresh();
-    },
-  });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((data) => mutate(data))}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="content"
@@ -69,18 +81,14 @@ export default function ChatInput({ apiUrl, type, query, name }: Props) {
                     <Plus className="text-white dark:text-[#313338]" />
                   </button>
                   <Input
-                    {...field}
                     disabled={isLoading}
                     className="px-14 py-6 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
-                    placeholder={`Message ${
-                      type === "conversation" ? name : "#" + name
-                    }`}
+                    placeholder={`Message ${type === "conversation" ? name : "#" + name}`}
+                    {...field}
                   />
                   <div className="absolute top-7 right-8">
                     <EmojiPicker
-                      onChange={(emoji) =>
-                        field.onChange(`${field.value} ${emoji}`)
-                      }
+                      onChange={(emoji: string) => field.onChange(`${field.value} ${emoji}`)}
                     />
                   </div>
                 </div>
@@ -90,5 +98,5 @@ export default function ChatInput({ apiUrl, type, query, name }: Props) {
         />
       </form>
     </Form>
-  );
+  )
 }

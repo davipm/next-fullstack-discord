@@ -1,9 +1,9 @@
-import { MemberRole } from "@prisma/client";
 import { NextApiRequest } from "next";
+import { MemberRole } from "@prisma/client";
 
-import currentProfilePages from "@/lib/current-profile-pages";
-import prisma from "@/lib/db";
 import { NextApiResponseServerIo } from "@/types";
+import { currentProfilePages } from "@/lib/current-profile-pages";
+import { db } from "@/lib/db";
 
 export default async function handler(
   req: NextApiRequest,
@@ -30,44 +30,42 @@ export default async function handler(
       return res.status(400).json({ error: "Channel ID missing" });
     }
 
-    const server = await prisma.server.findFirst({
+    const server = await db.server.findFirst({
       where: {
         id: serverId as string,
         members: {
           some: {
             profileId: profile.id,
-          },
-        },
+          }
+        }
       },
       include: {
         members: true,
-      },
-    });
+      }
+    })
 
     if (!server) {
       return res.status(404).json({ error: "Server not found" });
     }
 
-    const channel = await prisma.channel.findFirst({
+    const channel = await db.channel.findFirst({
       where: {
         id: channelId as string,
         serverId: serverId as string,
       },
     });
-
+  
     if (!channel) {
       return res.status(404).json({ error: "Channel not found" });
     }
 
-    const member = server.members.find(
-      (member) => member.profileId === profile.id,
-    );
+    const member = server.members.find((member) => member.profileId === profile.id);
 
     if (!member) {
       return res.status(404).json({ error: "Member not found" });
     }
 
-    let message = await prisma.message.findFirst({
+    let message = await db.message.findFirst({
       where: {
         id: messageId as string,
         channelId: channelId as string,
@@ -76,10 +74,10 @@ export default async function handler(
         member: {
           include: {
             profile: true,
-          },
-        },
-      },
-    });
+          }
+        }
+      }
+    })
 
     if (!message || message.deleted) {
       return res.status(404).json({ error: "Message not found" });
@@ -95,7 +93,7 @@ export default async function handler(
     }
 
     if (req.method === "DELETE") {
-      message = await prisma.message.update({
+      message = await db.message.update({
         where: {
           id: messageId as string,
         },
@@ -108,10 +106,10 @@ export default async function handler(
           member: {
             include: {
               profile: true,
-            },
-          },
-        },
-      });
+            }
+          }
+        }
+      })
     }
 
     if (req.method === "PATCH") {
@@ -119,7 +117,7 @@ export default async function handler(
         return res.status(401).json({ error: "Unauthorized" });
       }
 
-      message = await prisma.message.update({
+      message = await db.message.update({
         where: {
           id: messageId as string,
         },
@@ -130,10 +128,10 @@ export default async function handler(
           member: {
             include: {
               profile: true,
-            },
-          },
-        },
-      });
+            }
+          }
+        }
+      })
     }
 
     const updateKey = `chat:${channelId}:messages:update`;

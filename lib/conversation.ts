@@ -1,12 +1,7 @@
-import prisma from "@/lib/db";
+import { db } from "@/lib/db";
 
-export async function getOrCreateConversation(
-  memberOneId: string,
-  memberTwoId: string,
-) {
-  let conversation =
-    (await findConversation(memberOneId, memberTwoId)) ||
-    (await findConversation(memberTwoId, memberOneId));
+export const getOrCreateConversation = async (memberOneId: string, memberTwoId: string) => {
+  let conversation = await findConversation(memberOneId, memberTwoId) || await findConversation(memberTwoId, memberOneId);
 
   if (!conversation) {
     conversation = await createNewConversation(memberOneId, memberTwoId);
@@ -15,32 +10,54 @@ export async function getOrCreateConversation(
   return conversation;
 }
 
-async function findConversation(memberOneId: string, memberTwoId: string) {
+const findConversation = async (memberOneId: string, memberTwoId: string) => {
   try {
-    return await prisma.conversation.findFirst({
+    return await db.conversation.findFirst({
       where: {
-        AND: [{ memberOneId }, { memberTwoId }],
+        AND: [
+          { memberOneId: memberOneId },
+          { memberTwoId: memberTwoId },
+        ]
       },
       include: {
-        memberOne: { include: { profile: true } },
-        memberTwo: { include: { profile: true } },
-      },
+        memberOne: {
+          include: {
+            profile: true,
+          }
+        },
+        memberTwo: {
+          include: {
+            profile: true,
+          }
+        }
+      }
     });
-  } catch (error) {
-    throw new Error("Error find conversation");
+  } catch {
+    return null;
   }
 }
 
-async function createNewConversation(memberOneId: string, memberTwoId: string) {
+const createNewConversation = async (memberOneId: string, memberTwoId: string) => {
   try {
-    return await prisma.conversation.create({
-      data: { memberOneId, memberTwoId },
-      include: {
-        memberOne: { include: { profile: true } },
-        memberTwo: { include: { profile: true } },
+    return await db.conversation.create({
+      data: {
+        memberOneId,
+        memberTwoId,
       },
-    });
-  } catch (error) {
-    throw new Error("Error creating conversation");
+      include: {
+        memberOne: {
+          include: {
+            profile: true,
+          }
+        },
+        memberTwo: {
+          include: {
+            profile: true,
+          }
+        }
+      }
+    })
+  } catch {
+    return null;
   }
 }

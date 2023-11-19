@@ -1,105 +1,122 @@
-import { NextRequest, NextResponse as res } from "next/server";
+import { NextResponse } from "next/server";
 
-import currentProfile from "@/lib/current-profile";
-import prisma from "@/lib/db";
-import { memberSchema } from "@/schemas";
-import { MembersParams as Params } from "@/types";
+import { currentProfile } from "@/lib/current-profile";
+import { db } from "@/lib/db";
 
-export async function DELETE(req: NextRequest, { params }: Params) {
-  const profile = await currentProfile();
-  const serverId = req.nextUrl.searchParams.get("serverId");
-  const { memberId } = params;
+export async function DELETE(
+  req: Request,
+  { params }: { params: { memberId: string } }
+) {
+  try {
+    const profile = await currentProfile();
+    const { searchParams } = new URL(req.url);
 
-  if (!profile) return res.json({ message: "Unauthorized" }, { status: 401 });
+    const serverId = searchParams.get("serverId");
 
-  if (!memberId || !serverId)
-    return res.json({ message: "Invalid request" }, { status: 400 });
+    if (!profile) {
+      return new NextResponse("Unauthorized" ,{ status: 401 });
+    }
 
-  const server = await prisma.server.update({
-    where: {
-      id: serverId,
-      profileId: profile.id,
-    },
-    data: {
-      members: {
-        deleteMany: {
-          id: memberId,
-          profileId: {
-            not: profile.id,
+    if (!serverId) {
+      return new NextResponse("Server ID missing", { status: 400 });
+    }
+
+    if (!params.memberId) {
+      return new NextResponse("Member ID missing", { status: 400 });
+    }
+
+    const server = await db.server.update({
+      where: {
+        id: serverId,
+        profileId: profile.id,
+      },
+      data: {
+        members: {
+          deleteMany: {
+            id: params.memberId,
+            profileId: {
+              not: profile.id
+            }
+          }
+        }
+      },
+      include: {
+        members: {
+          include: {
+            profile: true,
           },
+          orderBy: {
+            role: "asc",
+          }
         },
       },
-    },
-    include: {
-      members: {
-        include: {
-          profile: true,
-        },
-        orderBy: {
-          role: "asc",
-        },
-      },
-    },
-  });
+    });
 
-  return res.json(server, { status: 200 });
+    return NextResponse.json(server);
+  } catch (error) {
+    console.log("[MEMBER_ID_DELETE]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
 }
 
-// const patchSchema = z.object({
-//   role: z.string(),
-// });
+export async function PATCH(
+  req: Request,
+  { params }: { params: { memberId: string } }
+) {
+  try {
+    const profile = await currentProfile();
+    const { searchParams } = new URL(req.url);
+    const { role } = await req.json();
 
-export async function PATCH(req: NextRequest, { params }: Params) {
-  const profile = await currentProfile();
-  const body = await req.json();
-  const response = memberSchema.safeParse(body);
-  const serverId = req.nextUrl.searchParams.get("serverId")!;
-  const { memberId } = params;
+    const serverId = searchParams.get("serverId");
 
-  if (!profile) return res.json({ message: "Unauthorized" }, { status: 401 });
+    if (!profile) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
 
-  if (!memberId || !serverId)
-    return res.json({ message: "Invalid request" }, { status: 400 });
+    if (!serverId) {
+      return new NextResponse("Server ID missing", { status: 400 });
+    }
 
-  if (!response.success) {
-    const { errors } = response.error;
-    return res.json({ message: "Invalid request", errors }, { status: 400 });
-  }
+    if (!params.memberId) {
+      return new NextResponse("Member ID missing", { status: 400 });
+    }
 
-  const { role } = response.data;
-
-  const server = await prisma.server.update({
-    where: {
-      id: serverId,
-      profileId: profile.id,
-    },
-    data: {
-      members: {
-        // @ts-ignore
-        update: {
-          where: {
-            id: memberId,
-            profileId: {
-              not: profile.id,
+    const server = await db.server.update({
+      where: {
+        id: serverId,
+        profileId: profile.id,
+      },
+      data: {
+        members: {
+          update: {
+            where: {
+              id: params.memberId,
+              profileId: {
+                not: profile.id
+              }
             },
-          },
-          data: {
-            role,
-          },
-        },
+            data: {
+              role
+            }
+          }
+        }
       },
-    },
-    include: {
-      members: {
-        include: {
-          profile: true,
-        },
-        orderBy: {
-          role: "asc",
-        },
-      },
-    },
-  });
+      include: {
+        members: {
+          include: {
+            profile: true,
+          },
+          orderBy: {
+            role: "asc"
+          }
+        }
+      }
+    });
 
-  return res.json(server, { status: 200 });
+    return NextResponse.json(server);
+  } catch (error) {
+    console.log("[MEMBERS_ID_PATCH]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
 }
