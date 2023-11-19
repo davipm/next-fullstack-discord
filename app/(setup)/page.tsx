@@ -4,6 +4,10 @@ import { db } from "@/lib/db";
 import { initialProfile } from "@/lib/initial-profile";
 import { InitialModal } from "@/components/modals/initial-modal";
 
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
+export const revalidate = 0;
+
 const SetupPage = async () => {
   const profile = await initialProfile();
 
