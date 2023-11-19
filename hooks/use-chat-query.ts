@@ -1,4 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
+import axios from "axios";
 import qs from "query-string";
 
 import { useSocket } from "@/providers/socket-provider";
@@ -28,8 +29,8 @@ export default function useChatQuery({ queryKey, paramKey, ...rest }: Props) {
           { skipNull: true },
         );
 
-        const res = await fetch(url);
-        return res.json();
+        const { data } = await axios.get(url);
+        return data;
       },
       initialPageParam: 0,
       getNextPageParam: (lastPage) => lastPage?.nextCursor ?? undefined,
