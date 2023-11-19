@@ -14,10 +14,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useOrigin } from "@/hooks/use-origin";
 import { useModal } from "@/store";
 
 export default function InviteModal() {
   const { onOpen, isOpen, onClose, type, data } = useModal();
+  const origin = useOrigin();
 
   const isModalOpen = isOpen && type === "invite";
   const { server } = data;
