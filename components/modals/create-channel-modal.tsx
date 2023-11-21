@@ -72,7 +72,7 @@ export const CreateChannelModal = () => {
     }
   }, [channelType, form]);
 
-  const { mutate, isPending: isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => {
       return axios.post(`/api/channels?serverId=${params?.serverId}`, values);
     },

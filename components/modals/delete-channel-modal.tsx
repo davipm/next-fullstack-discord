@@ -22,7 +22,7 @@ export const DeleteChannelModal = () => {
   const isModalOpen = isOpen && type === "deleteChannel";
   const { server, channel } = data;
 
-  const { mutate, isPending: isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: () => {
       return axios.post(`/api/channels?serverId=${server?.id}`);
     },

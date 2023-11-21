@@ -17,7 +17,7 @@ interface Props {
 export function MediaRoom({ chatId, video, audio }: Props) {
   const { user } = useUser();
 
-  const { isPending, isError, data, error } = useQuery({
+  const { isLoading, isError, data, error } = useQuery({
     queryKey: ["videoCall"],
     queryFn: async () => {
       const name = `${user?.firstName} ${user?.lastName}`;
@@ -31,7 +31,7 @@ export function MediaRoom({ chatId, video, audio }: Props) {
     enabled: !!user?.firstName || !!user?.lastName,
   });
 
-  if (isPending) {
+  if (isLoading) {
     return (
       <div className="flex flex-col flex-1 justify-center items-center">
         <Loader2 className="h-7 w-7 text-zinc-500 animate-spin my-4" />

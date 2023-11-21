@@ -51,7 +51,7 @@ export const CreateServerModal = () => {
     },
   });
 
-  const { mutate, isPending: isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => {
       return axios.post("/api/servers", values);
     },

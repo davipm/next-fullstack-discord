@@ -6,20 +6,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ReactNode } from "react";
 
-interface ActionTooltipProps {
+interface Props {
   label: string;
-  children: React.ReactNode;
+  children: ReactNode;
   side?: "top" | "right" | "bottom" | "left";
   align?: "start" | "center" | "end";
 }
 
-export const ActionTooltip = ({
-  label,
-  children,
-  side,
-  align,
-}: ActionTooltipProps) => {
+export const ActionTooltip = ({ label, children, side, align }: Props) => {
   return (
     <TooltipProvider>
       <Tooltip delayDuration={50}>
