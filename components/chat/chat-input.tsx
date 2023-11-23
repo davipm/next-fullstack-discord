@@ -36,7 +36,7 @@ export const ChatInput = ({ apiUrl, query, name, type }: ChatInputProps) => {
     },
   });
 
-  const { mutate, isPending: isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => {
       return axios.post(qs.stringifyUrl({ url: apiUrl, query }), values);
     },
