@@ -14,21 +14,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/file-upload";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
+import { useMutation } from "@tanstack/react-query";
 
 const formSchema = z.object({
   fileUrl: z.string().min(1, {
-    message: "Attachment is required."
-  })
+    message: "Attachment is required.",
+  }),
 });
 
 export const MessageFileModal = () => {
@@ -42,35 +38,32 @@ export const MessageFileModal = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       fileUrl: "",
-    }
+    },
   });
 
   const handleClose = () => {
     form.reset();
     onClose();
-  }
+  };
 
-  const isLoading = form.formState.isSubmitting;
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
+  const { mutate, isLoading } = useMutation({
+    mutationFn: (values: z.infer<typeof formSchema>) => {
       const url = qs.stringifyUrl({
         url: apiUrl || "",
         query,
       });
 
-      await axios.post(url, {
+      return axios.post(url, {
         ...values,
         content: values.fileUrl,
       });
-
+    },
+    onSuccess: () => {
       form.reset();
       router.refresh();
       handleClose();
-    } catch (error) {
-      console.log(error);
-    }
-  }
+    },
+  });
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
@@ -84,7 +77,10 @@ export const MessageFileModal = () => {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit((data1) => mutate(data1))}
+            className="space-y-8"
+          >
             <div className="space-y-8 px-6">
               <div className="flex items-center justify-center text-center">
                 <FormField
@@ -113,5 +109,5 @@ export const MessageFileModal = () => {
         </Form>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
