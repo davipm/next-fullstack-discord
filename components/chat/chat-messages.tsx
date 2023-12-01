@@ -20,7 +20,7 @@ type MessageWithMemberWithProfile = Message & {
   };
 };
 
-interface ChatMessagesProps {
+interface Props {
   name: string;
   member: Member;
   chatId: string;
@@ -32,20 +32,10 @@ interface ChatMessagesProps {
   type: "channel" | "conversation";
 }
 
-export const ChatMessages = ({
-  name,
-  member,
-  chatId,
-  apiUrl,
-  socketUrl,
-  socketQuery,
-  paramKey,
-  paramValue,
-  type,
-}: ChatMessagesProps) => {
-  const queryKey = `chat:${chatId}`;
-  const addKey = `chat:${chatId}:messages`;
-  const updateKey = `chat:${chatId}:messages:update`;
+export const ChatMessages = ({ name, member, type, ...rest }: Props) => {
+  const queryKey = `chat:${rest.chatId}`;
+  const addKey = `chat:${rest.chatId}:messages`;
+  const updateKey = `chat:${rest.chatId}:messages:update`;
 
   const chatRef = useRef<ElementRef<"div">>(null);
   const bottomRef = useRef<ElementRef<"div">>(null);
@@ -53,9 +43,9 @@ export const ChatMessages = ({
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useChatQuery({
       queryKey,
-      apiUrl,
-      paramKey,
-      paramValue,
+      apiUrl: rest.apiUrl,
+      paramKey: rest.paramKey,
+      paramValue: rest.paramValue,
     });
   useChatSocket({ queryKey, addKey, updateKey });
 
@@ -122,8 +112,8 @@ export const ChatMessages = ({
                 deleted={message.deleted}
                 timestamp={format(new Date(message.createdAt), DATE_FORMAT)}
                 isUpdated={message.updatedAt !== message.createdAt}
-                socketUrl={socketUrl}
-                socketQuery={socketQuery}
+                socketUrl={rest.socketUrl}
+                socketQuery={rest.socketQuery}
               />
             ))}
           </Fragment>

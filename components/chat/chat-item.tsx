@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-modal-store";
 import { useMutation } from "@tanstack/react-query";
 
-interface ChatItemProps {
+interface Props {
   id: string;
   content: string;
   member: Member & {
@@ -45,25 +45,14 @@ const formSchema = z.object({
   content: z.string().min(1),
 });
 
-export const ChatItem = ({
-  id,
-  content,
-  member,
-  timestamp,
-  fileUrl,
-  deleted,
-  currentMember,
-  isUpdated,
-  socketUrl,
-  socketQuery,
-}: ChatItemProps) => {
+export const ChatItem = ({ id, content, member, fileUrl, ...rest }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const { onOpen } = useModal();
   const params = useParams();
   const router = useRouter();
 
   const onMemberClick = () => {
-    if (member.id === currentMember.id) return;
+    if (member.id === rest.currentMember.id) return;
     router.push(`/servers/${params?.serverId}/conversations/${member.id}`);
   };
 
@@ -88,7 +77,10 @@ export const ChatItem = ({
   const { mutate, isLoading } = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => {
       return axios.patch(
-        qs.stringifyUrl({ url: `${socketUrl}/${id}`, query: socketQuery }),
+        qs.stringifyUrl({
+          url: `${rest.socketUrl}/${id}`,
+          query: rest.socketQuery,
+        }),
         values,
       );
     },
@@ -106,11 +98,11 @@ export const ChatItem = ({
 
   const fileType = fileUrl?.split(".").pop();
 
-  const isAdmin = currentMember.role === MemberRole.ADMIN;
-  const isModerator = currentMember.role === MemberRole.MODERATOR;
-  const isOwner = currentMember.id === member.id;
-  const canDeleteMessage = !deleted && (isAdmin || isModerator || isOwner);
-  const canEditMessage = !deleted && isOwner && !fileUrl;
+  const isAdmin = rest.currentMember.role === MemberRole.ADMIN;
+  const isModerator = rest.currentMember.role === MemberRole.MODERATOR;
+  const isOwner = rest.currentMember.id === member.id;
+  const canDeleteMessage = !rest.deleted && (isAdmin || isModerator || isOwner);
+  const canEditMessage = !rest.deleted && isOwner && !fileUrl;
   const isPDF = fileType === "pdf" && fileUrl;
   const isImage = !isPDF && fileUrl;
 
@@ -137,7 +129,7 @@ export const ChatItem = ({
               </ActionTooltip>
             </div>
             <span className="text-xs text-zinc-500 dark:text-zinc-400">
-              {timestamp}
+              {rest.timestamp}
             </span>
           </div>
           {isImage && (
@@ -172,12 +164,12 @@ export const ChatItem = ({
             <p
               className={cn(
                 "text-sm text-zinc-600 dark:text-zinc-300",
-                deleted &&
+                rest.deleted &&
                   "italic text-zinc-500 dark:text-zinc-400 text-xs mt-1",
               )}
             >
               {content}
-              {isUpdated && !deleted && (
+              {rest.isUpdated && !rest.deleted && (
                 <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400">
                   (edited)
                 </span>
@@ -233,8 +225,8 @@ export const ChatItem = ({
             <Trash
               onClick={() =>
                 onOpen("deleteMessage", {
-                  apiUrl: `${socketUrl}/${id}`,
-                  query: socketQuery,
+                  apiUrl: `${rest.socketUrl}/${id}`,
+                  query: rest.socketQuery,
                 })
               }
               className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition"
