@@ -61,7 +61,7 @@ export const ChatInput = ({ apiUrl, query, name, type }: ChatInputProps) => {
                     type="button"
                     onClick={() => onOpen("messageFile", { apiUrl, query })}
                     aria-label="Add File"
-                    className="w-[24px] h-[24px] p-1"
+                    className="absolute w-[24px] h-[24px] p-1 top-7 left-7"
                     variant="file"
                   >
                     <Plus className="text-white dark:text-[#313338]" />
