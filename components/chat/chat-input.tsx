@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useModal } from "@/hooks/use-modal-store";
 import { EmojiPicker } from "@/components/emoji-picker";
 import { useMutation } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 
 interface ChatInputProps {
   apiUrl: string;
@@ -56,13 +57,15 @@ export const ChatInput = ({ apiUrl, query, name, type }: ChatInputProps) => {
             <FormItem>
               <FormControl>
                 <div className="relative p-4 pb-6">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => onOpen("messageFile", { apiUrl, query })}
-                    className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-600 dark:hover:bg-zinc-300 transition rounded-full p-1 flex items-center justify-center"
+                    aria-label="Add File"
+                    className="w-[24px] h-[24px] p-1"
+                    variant="file"
                   >
                     <Plus className="text-white dark:text-[#313338]" />
-                  </button>
+                  </Button>
                   <Input
                     disabled={isLoading}
                     className="px-14 py-6 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
