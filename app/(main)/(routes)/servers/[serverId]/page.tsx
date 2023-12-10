@@ -4,15 +4,13 @@ import { redirect } from "next/navigation";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 
-interface ServerIdPageProps {
+interface Props {
   params: {
     serverId: string;
-  }
-};
+  };
+}
 
-const ServerIdPage = async ({
-  params
-}: ServerIdPageProps) => {
+const ServerIdPage = async ({ params }: Props) => {
   const profile = await currentProfile();
 
   if (!profile) {
@@ -25,20 +23,20 @@ const ServerIdPage = async ({
       members: {
         some: {
           profileId: profile.id,
-        }
-      }
+        },
+      },
     },
     include: {
       channels: {
         where: {
-          name: "general"
+          name: "general",
         },
         orderBy: {
-          createdAt: "asc"
-        }
-      }
-    }
-  })
+          createdAt: "asc",
+        },
+      },
+    },
+  });
 
   const initialChannel = server?.channels[0];
 
@@ -46,7 +44,7 @@ const ServerIdPage = async ({
     return null;
   }
 
-  return redirect(`/servers/${params.serverId}/channels/${initialChannel?.id}`)
-}
+  return redirect(`/servers/${params.serverId}/channels/${initialChannel?.id}`);
+};
 
 export default ServerIdPage;

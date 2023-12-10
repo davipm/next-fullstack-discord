@@ -14,7 +14,6 @@ import { useModal } from "@/hooks/use-modal-store";
 import { EmojiPicker } from "@/components/emoji-picker";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import {useState} from "react";
 
 interface ChatInputProps {
   apiUrl: string;
