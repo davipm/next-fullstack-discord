@@ -42,8 +42,7 @@ export const useChatScroll = ({ chatRef, loadMore, count, ...rest }: Props) => {
         return false;
       }
 
-      const distanceFromBottom =
-        topDiv.scrollHeight - topDiv.scrollTop - topDiv.clientHeight;
+      const distanceFromBottom = topDiv.scrollHeight - topDiv.scrollTop - topDiv.clientHeight;
       return distanceFromBottom <= 100;
     };
 

@@ -4,10 +4,7 @@ import { MemberRole } from "@prisma/client";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { channelId: string } },
-) {
+export async function DELETE(req: Request, { params }: { params: { channelId: string } }) {
   try {
     const profile = await currentProfile();
     const { searchParams } = new URL(req.url);
@@ -57,10 +54,7 @@ export async function DELETE(
   }
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { channelId: string } },
-) {
+export async function PATCH(req: Request, { params }: { params: { channelId: string } }) {
   try {
     const profile = await currentProfile();
     const { name, type } = await req.json();

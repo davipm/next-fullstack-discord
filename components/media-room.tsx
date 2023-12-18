@@ -22,9 +22,7 @@ export function MediaRoom({ chatId, video, audio }: Props) {
     queryFn: async () => {
       const name = `${user?.firstName} ${user?.lastName}`;
 
-      const { data } = await axios.get<{ token: string }>(
-        `/api/livekit?room=${chatId}&username=${name}`,
-      );
+      const { data } = await axios.get<{ token: string }>(`/api/livekit?room=${chatId}&username=${name}`);
 
       return data.token;
     },
@@ -33,8 +31,8 @@ export function MediaRoom({ chatId, video, audio }: Props) {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col flex-1 justify-center items-center">
-        <Loader2 className="h-7 w-7 text-zinc-500 animate-spin my-4" />
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <Loader2 className="my-4 h-7 w-7 animate-spin text-zinc-500" />
         <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading...</p>
       </div>
     );
@@ -42,7 +40,7 @@ export function MediaRoom({ chatId, video, audio }: Props) {
 
   if (isError) {
     return (
-      <div className="flex flex-col flex-1 justify-center items-center">
+      <div className="flex flex-1 flex-col items-center justify-center">
         <p className="text-sm text-zinc-500 dark:text-zinc-400">Error!</p>
       </div>
     );

@@ -44,13 +44,7 @@ export const ServerSearch = ({ data }: ServerSearchProps) => {
     return () => window.removeEventListener("keydown", down);
   }, []);
 
-  const onClick = ({
-    id,
-    type,
-  }: {
-    id: string;
-    type: "channel" | "member";
-  }) => {
+  const onClick = ({ id, type }: { id: string; type: "channel" | "member" }) => {
     setOpen(false);
 
     if (type === "member") {
@@ -66,13 +60,13 @@ export const ServerSearch = ({ data }: ServerSearchProps) => {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="group px-2 py-2 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50 transition"
+        className="group flex w-full items-center gap-x-2 rounded-md px-2 py-2 transition hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50"
       >
-        <Search className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
-        <p className="font-semibold text-sm text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition">
+        <Search className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+        <p className="text-sm font-semibold text-zinc-500 transition group-hover:text-zinc-600 dark:text-zinc-400 dark:group-hover:text-zinc-300">
           Search
         </p>
-        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground ml-auto">
+        <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
           <span className="text-xs">⌘</span>K
         </kbd>
       </button>
@@ -87,10 +81,7 @@ export const ServerSearch = ({ data }: ServerSearchProps) => {
               <CommandGroup key={label} heading={label}>
                 {data?.map(({ id, icon, name }) => {
                   return (
-                    <CommandItem
-                      key={id}
-                      onSelect={() => onClick({ id, type })}
-                    >
+                    <CommandItem key={id} onSelect={() => onClick({ id, type })}>
                       {icon}
                       <span>{name}</span>
                     </CommandItem>

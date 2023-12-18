@@ -61,25 +61,19 @@ export const ChatInput = ({ apiUrl, query, name, type }: ChatInputProps) => {
                     type="button"
                     onClick={() => onOpen("messageFile", { apiUrl, query })}
                     aria-label="Add File"
-                    className="absolute w-[24px] h-[24px] p-1 top-7 left-7"
+                    className="absolute left-7 top-7 h-[24px] w-[24px] p-1"
                     variant="file"
                   >
                     <Plus className="text-white dark:text-[#313338]" />
                   </Button>
                   <Input
                     disabled={isLoading}
-                    className="px-14 py-6 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
-                    placeholder={`Message ${
-                      type === "conversation" ? name : "#" + name
-                    }`}
+                    className="border-0 border-none bg-zinc-200/90 px-14 py-6 text-zinc-600 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-zinc-700/75 dark:text-zinc-200"
+                    placeholder={`Message ${type === "conversation" ? name : "#" + name}`}
                     {...field}
                   />
-                  <div className="absolute top-7 right-8">
-                    <EmojiPicker
-                      onChange={(emoji: string) =>
-                        field.onChange(`${field.value} ${emoji}`)
-                      }
-                    />
+                  <div className="absolute right-8 top-7">
+                    <EmojiPicker onChange={(emoji: string) => field.onChange(`${field.value} ${emoji}`)} />
                   </div>
                 </div>
               </FormControl>

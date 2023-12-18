@@ -67,20 +67,13 @@ export const MessageFileModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="bg-white text-black p-0 overflow-hidden">
-        <DialogHeader className="pt-8 px-6">
-          <DialogTitle className="text-2xl text-center font-bold">
-            Add an attachment
-          </DialogTitle>
-          <DialogDescription className="text-center text-zinc-500">
-            Send a file as a message
-          </DialogDescription>
+      <DialogContent className="overflow-hidden bg-white p-0 text-black">
+        <DialogHeader className="px-6 pt-8">
+          <DialogTitle className="text-center text-2xl font-bold">Add an attachment</DialogTitle>
+          <DialogDescription className="text-center text-zinc-500">Send a file as a message</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit((data1) => mutate(data1))}
-            className="space-y-8"
-          >
+          <form onSubmit={form.handleSubmit((data1) => mutate(data1))} className="space-y-8">
             <div className="space-y-8 px-6">
               <div className="flex items-center justify-center text-center">
                 <FormField
@@ -89,11 +82,7 @@ export const MessageFileModal = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <FileUpload
-                          endpoint="messageFile"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
+                        <FileUpload endpoint="messageFile" value={field.value} onChange={field.onChange} />
                       </FormControl>
                     </FormItem>
                   )}

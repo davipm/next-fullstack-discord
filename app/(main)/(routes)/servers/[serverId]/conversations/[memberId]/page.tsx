@@ -40,10 +40,7 @@ const MemberIdPage = async ({ params, searchParams }: Props) => {
     return redirect("/");
   }
 
-  const conversation = await getOrCreateConversation(
-    currentMember.id,
-    params.memberId,
-  );
+  const conversation = await getOrCreateConversation(currentMember.id, params.memberId);
 
   if (!conversation) {
     return redirect(`/servers/${params.serverId}`);
@@ -51,20 +48,17 @@ const MemberIdPage = async ({ params, searchParams }: Props) => {
 
   const { memberOne, memberTwo } = conversation;
 
-  const otherMember =
-    memberOne.profileId === profile.id ? memberTwo : memberOne;
+  const otherMember = memberOne.profileId === profile.id ? memberTwo : memberOne;
 
   return (
-    <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
+    <div className="flex h-full flex-col bg-white dark:bg-[#313338]">
       <ChatHeader
         imageUrl={otherMember.profile.imageUrl}
         name={otherMember.profile.name}
         serverId={params.serverId}
         type="conversation"
       />
-      {searchParams.video && (
-        <MediaRoom chatId={conversation.id} video={true} audio={true} />
-      )}
+      {searchParams.video && <MediaRoom chatId={conversation.id} video={true} audio={true} />}
       {!searchParams.video && (
         <>
           <ChatMessages

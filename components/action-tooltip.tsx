@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ReactNode } from "react";
 
 interface Props {
@@ -21,9 +16,7 @@ export const ActionTooltip = ({ label, children, side, align }: Props) => {
       <Tooltip delayDuration={50}>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent side={side} align={align}>
-          <p className="font-semibold text-sm capitalize">
-            {label.toLowerCase()}
-          </p>
+          <p className="text-sm font-semibold capitalize">{label.toLowerCase()}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
