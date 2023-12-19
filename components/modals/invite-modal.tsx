@@ -1,16 +1,16 @@
 "use client";
 
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { Check, Copy, RefreshCw } from "lucide-react";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useModal } from "@/hooks/use-modal-store";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useOrigin } from "@/hooks/use-origin";
-import { useMutation } from "@tanstack/react-query";
 
 export const InviteModal = () => {
   const { onOpen, isOpen, onClose, type, data } = useModal();

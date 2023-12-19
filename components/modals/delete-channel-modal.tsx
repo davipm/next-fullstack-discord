@@ -1,8 +1,10 @@
 "use client";
 
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,8 +14,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/use-modal-store";
-import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
 
 export const DeleteChannelModal = () => {
   const { isOpen, onClose, type, data } = useModal();

@@ -1,10 +1,10 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Video, VideoOff } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
 
 import { ActionTooltip } from "@/components/action-tooltip";
-import { useCallback } from "react";
 
 export const ChatVideoButton = () => {
   const router = useRouter();

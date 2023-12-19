@@ -1,17 +1,17 @@
 import { ChannelType, MemberRole } from "@prisma/client";
-import { redirect } from "next/navigation";
 import { Hash, Mic, ShieldAlert, ShieldCheck, Video } from "lucide-react";
+import { redirect } from "next/navigation";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 
+import { ServerChannel } from "./server-channel";
 import { ServerHeader } from "./server-header";
+import { ServerMember } from "./server-member";
 import { ServerSearch } from "./server-search";
 import { ServerSection } from "./server-section";
-import { ServerChannel } from "./server-channel";
-import { ServerMember } from "./server-member";
 
 interface ServerSidebarProps {
   serverId: string;
